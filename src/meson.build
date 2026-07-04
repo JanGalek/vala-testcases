@@ -30,5 +30,3 @@ pkg.generate(
   filebase: 'vala-testcases',
   description: 'Vala Test cases.'
 )
-
-#shared_library('vala-testcases-example', 'example.c', dependencies: [vala_testcases_dep])
