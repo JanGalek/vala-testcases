@@ -1,10 +1,10 @@
-# Vala library template
-This is template for new Vala library project
+# Vala test cases
+Simply library for easier write tests
 
 ## First init
 
 ```sh
-curl -sSfL https://JanGalek.github.io/vala-library-template/init.sh -o init.sh && chmod +x init.sh && ./init.sh && rm init.sh
+curl -sSfL https://JanGalek.github.io/vala-testcases/init.sh -o init.sh && chmod +x init.sh && ./init.sh && rm init.sh
 ```
 
 ### What to change

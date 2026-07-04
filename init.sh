@@ -23,17 +23,17 @@ if [ ! -d "subprojects" ]; then
 fi
 
 # 3. Generate the .wrap file
-WRAP_FILE="subprojects/vala-library-template.wrap"
+WRAP_FILE="subprojects/vala-testcases.wrap"
 echo -e "Generating wrap file ${BLUE}${WRAP_FILE}${NC}..."
 
 cat << 'EOF' > "$WRAP_FILE"
 [wrap-git]
-url = https://github.com/JanGalek/vala-library-template.git
+url = https://github.com/JanGalek/vala-testcases.git
 revision = v1.0.0
 depth = 1
 
 [provide]
-dependency_name = vala-library-template
+dependency_name = vala-testcases
 EOF
 
 echo -e "${GREEN}[Done] Wrap file has been successfully created.${NC}\n"
@@ -41,12 +41,12 @@ echo -e "${GREEN}[Done] Wrap file has been successfully created.${NC}\n"
 # 4. Instructions for the developer on how to proceed
 echo -e "${BLUE}Now edit your main 'meson.build' and add the dependency:${NC}"
 echo -e "--------------------------------------------------------"
-echo -e "vala-library-template_dep = dependency('vala-library-template', fallback: ['vala-library-template', 'vala-library-template_dep'])"
+echo -e "vala-testcases_dep = dependency('vala-testcases', fallback: ['vala-testcases', 'vala-testcases_dep'])"
 echo -e ""
 echo -e "executable("
 echo -e "  'your-binary-name',"
 echo -e "  'your-source-files.vala',"
-echo -e "  dependencies: [ dependency('glib-2.0'), dependency('gio-2.0'), ${GREEN}vala-library-template_dep${NC} ]"
+echo -e "  dependencies: [ dependency('glib-2.0'), dependency('gio-2.0'), ${GREEN}vala-testcases_dep${NC} ]"
 echo -e ")"
 echo -e "--------------------------------------------------------"
 echo -e "Then just build the project using: ${GREEN}meson setup build && meson compile -C build${NC}"
