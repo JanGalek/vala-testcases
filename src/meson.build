@@ -16,7 +16,7 @@ vala_lib = shared_library(
   vala_header: 'vala_testcases.h'
 )
 
-vala_lib_dep = declare_dependency(
+vala_testcase_dep = declare_dependency(
   link_with: vala_lib,
   include_directories: include_directories('.'),
   sources: lib_sources
