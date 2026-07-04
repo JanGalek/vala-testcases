@@ -8,12 +8,12 @@ vala_lib_deps = [
 ]
 
 vala_lib = shared_library(
-  'vala-testcases',
+  'vala_testcases',
   lib_sources,
   dependencies: vala_lib_deps,
   install: true,
-  vala_vapi: 'vala-testcases.vapi',
-  vala_header: 'vala-testcases.h'
+  vala_vapi: 'vala_testcases.vapi',
+  vala_header: 'vala_testcases.h'
 )
 
 vala_lib_dep = declare_dependency(
@@ -26,7 +26,7 @@ pkg = import('pkgconfig')
 pkg.generate(
   vala_lib,
   version: '1.0',
-  name: 'vala-testcases',
-  filebase: 'vala-testcases',
+  name: 'vala_testcases',
+  filebase: 'vala_testcases',
   description: 'Vala Test cases.'
 )
