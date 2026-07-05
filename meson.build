@@ -1,4 +1,4 @@
-project('vala-testcases', 'vala', 'c', version: '1.0.5')
+project('vala-testcases', 'vala', 'c', version: '1.1.0')
 
 subdir('src')
 subdir('tests')
