@@ -36,6 +36,76 @@ depth = 1
 dependency_name = vala_testcases
 EOF
 
+TEST_MAIN_FILE="tests/main.vala"
+echo -e "Generating main test file ${BLUE}${TEST_MAIN_FILE}${NC}..."
+
+cat << 'EOF' > "$TEST_MAIN_FILE"
+using GLib;
+using Gee;
+
+int main (string[] args) {
+
+    Testcases.BaseTest.saved_commands = new Gee.ArrayList<Testcases.TestCommand> ();
+    Test.init (ref args);
+
+    Testcases.register_test_suite<AppTests.ExampleTest> ();
+
+
+    return Test.run ();
+}
+
+EOF
+
+TEST_EXAMPLE_TEST_FILE="tests/example_test.vala"
+echo -e "Generating example test file ${BLUE}${TEST_EXAMPLE_TEST_FILE}${NC}..."
+
+cat << 'EOF' > "$TEST_EXAMPLE_TEST_FILE"
+namespace AppTests {
+    using GLib;
+    using Testcases;
+
+    public class ExampleTest : BaseTest {
+        construct {
+            add_test ("matematika", test_matematika);
+            add_test ("text", test_text);
+        }
+
+        public void test_matematika () {
+            assert (1 + 1 == 2);
+        }
+
+        public void test_text () {
+            assert ("vala".length == 4);
+        }
+    }
+}
+
+EOF
+
+TEST_MESON_FILE="tests/meson.build"
+echo -e "Generating meson build file ${BLUE}${TEST_MESON_FILE}${NC}..."
+
+cat << 'EOF' > "$TEST_MESON_FILE"
+test_env = environment()
+test_sources = files(
+  'main.vala',
+  'example_test.vala',
+)
+
+
+test_exe = executable('tests',
+  test_sources,
+  dependencies: vala_lib_deps,
+  link_with: vala_lib,
+  include_directories: [include_directories('../src')],
+  vala_args: ['--target-glib=2.58'],
+)
+
+test('Unit Tests', test_exe, env: test_env, protocol: 'tap')
+
+EOF
+
+
 echo -e "${GREEN}[Done] Wrap file has been successfully created.${NC}\n"
 
 # 4. Instructions for the developer on how to proceed
@@ -48,5 +118,6 @@ echo -e "  'your-binary-name',"
 echo -e "  'your-source-files.vala',"
 echo -e "  dependencies: [ dependency('glib-2.0'), dependency('gio-2.0'), ${GREEN}vala_testcases_dep${NC} ]"
 echo -e ")"
+echo -e "subdir('tests')"
 echo -e "--------------------------------------------------------"
 echo -e "Then just build the project using: ${GREEN}meson setup build && meson compile -C build${NC}"
