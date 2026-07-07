@@ -23,19 +23,15 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         run: |
           TAG_VERSION="${GITHUB_REF_NAME#v}"
-          FILE_VERSION="$(sed -nE "s/^project\('vala-testcases', 'vala', 'c', version: '([^']+)'\)/\1/p" meson.build)"
+          perl -0777 -i -pe "s/project\('vala-testcases', 'vala', 'c', version: '[^']+'\)/project('vala-testcases', 'vala', 'c', version: '${TAG_VERSION}')/" meson.build
 
-          if [ -z "${FILE_VERSION}" ]; then
-            echo "::warning::Unable to read project version from meson.build"
-            exit 0
+          SYNCED_VERSION="$(sed -nE "s/^project\('vala-testcases', 'vala', 'c', version: '([^']+)'\)/\1/p" meson.build)"
+          if [ "${SYNCED_VERSION}" != "${TAG_VERSION}" ]; then
+            echo "::error::Version sync failed (${SYNCED_VERSION} != ${TAG_VERSION})"
+            exit 1
           fi
 
-          if [ "${FILE_VERSION}" != "${TAG_VERSION}" ]; then
-            sed -i -E "s/(project\('vala-testcases', 'vala', 'c', version: ')[^']+('\))/\1${TAG_VERSION}\2/" meson.build
-            echo "Updated meson.build version: ${FILE_VERSION} -> ${TAG_VERSION}"
-          else
-            echo "meson.build already matches tag version: ${TAG_VERSION}"
-          fi
+          echo "meson.build now uses release version ${SYNCED_VERSION}"
 
       - name: Install system dependencies
         run: |
@@ -112,19 +108,15 @@ jobs:
 
       - name: Persist meson.build version to default branch
         if: startsWith(github.ref, 'refs/tags/')
+        env:
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
         run: |
           TAG_VERSION="${GITHUB_REF_NAME#v}"
-
-          if git show-ref --verify --quiet refs/remotes/origin/main; then
-            DEFAULT_BRANCH="main"
-          else
-            DEFAULT_BRANCH="master"
-          fi
 
           git fetch origin "${DEFAULT_BRANCH}" --depth=1
           git checkout "${DEFAULT_BRANCH}"
 
-          sed -i -E "s/(project\('vala-testcases', 'vala', 'c', version: ')[^']+('\))/\1${TAG_VERSION}\2/" meson.build
+          perl -0777 -i -pe "s/project\('vala-testcases', 'vala', 'c', version: '[^']+'\)/project('vala-testcases', 'vala', 'c', version: '${TAG_VERSION}')/" meson.build
 
           if git diff --quiet -- meson.build; then
             echo "No version commit needed on ${DEFAULT_BRANCH}"
