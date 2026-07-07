@@ -105,6 +105,51 @@ In your consumer `meson.build`:
 vala_testcases_dep = dependency('vala_testcases', method: 'pkg-config')
 ```
 
+### Option 3: Local vapi folder in your project
+
+If you want everything vendored inside your own repository, copy release artifacts into your consumer project, for example:
+
+- `your-project/vapi/vala_testcases.vapi`
+- `your-project/lib/libvala_testcases.so`
+- `your-project/include/vala_testcases.h`
+
+To automate this setup, run the helper script in your consumer project root:
+
+```sh
+curl -sSfL https://raw.githubusercontent.com/JanGalek/vala-testcases/master/init-local-vapi.sh | bash
+```
+
+The script will:
+
+- download a prebuilt release ZIP when available (fast path)
+- fallback to building `vala-testcases` from source when release assets are unavailable
+- copy artifacts into your local `vapi/`, `lib/`, and `include/` directories
+- append an idempotent helper block to your `meson.build` with reusable variables
+
+You can also run it from a local file copy:
+
+```sh
+./init-local-vapi.sh
+```
+
+Then configure your consumer `meson.build`:
+
+```meson
+executable('my-tests',
+	['tests/main.vala', 'tests/example_test.vala'],
+	dependencies: vala_testcases_local_deps,
+	vala_args: vala_testcases_local_vala_args,
+	c_args: vala_testcases_local_c_args,
+	link_args: vala_testcases_local_link_args,
+)
+```
+
+And load the shared library at runtime, for example:
+
+```sh
+LD_LIBRARY_PATH=./lib ./my-tests
+```
+
 ## Quick init (dependency setup)
 
 To add `vala-testcases` as a Meson subproject dependency, run:
@@ -117,6 +162,12 @@ Or run it directly from GitHub:
 
 ```sh
 curl -sSfL https://raw.githubusercontent.com/JanGalek/vala-testcases/refs/heads/master/init.sh -o init.sh && chmod +x init.sh && ./init.sh && rm init.sh
+```
+
+For local vendored integration without subprojects, use:
+
+```sh
+curl -sSfL https://raw.githubusercontent.com/JanGalek/vala-testcases/master/init-local-vapi.sh | bash
 ```
 
 ## Build
