@@ -18,8 +18,7 @@ vala_testcases_lib = shared_library(
 
 vala_testcases_dep = declare_dependency(
   link_with: vala_testcases_lib,
-  include_directories: include_directories('.'),
-  sources: lib_sources
+  include_directories: include_directories('.')
 )
 
 pkg = import('pkgconfig')
