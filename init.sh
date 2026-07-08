@@ -34,7 +34,7 @@ revision = master
 depth = 1
 
 [provide]
-dependency_name = vala_testcases
+vala_testcases = vala_testcases_dep
 EOF
 
 TEST_MAIN_FILE="tests/main.vala"
@@ -93,10 +93,11 @@ test_sources = files(
   'example_test.vala',
 )
 
+vala_testcases_dep = dependency('vala_testcases', fallback: ['vala_testcases', 'vala_testcase_dep'])
 
 test_exe = executable('tests',
   test_sources,
-  dependencies: vala_lib_deps,
+  dependencies: [dependency('gee-0.8'), vala_testcases_dep],
   link_with: vala_lib,
   include_directories: [include_directories('../src')],
   vala_args: ['--target-glib=2.58'],
