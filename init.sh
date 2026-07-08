@@ -21,6 +21,7 @@ if [ ! -d "subprojects" ]; then
     echo -e "Creating ${BLUE}subprojects/${NC} directory..."
 fi
 mkdir -p "subprojects"
+mkdir -p "tests"
 
 # 3. Generate the .wrap file
 WRAP_FILE="subprojects/vala_testcases.wrap"
